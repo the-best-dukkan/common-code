@@ -1,0 +1,73 @@
+plugins {
+    id 'java-library'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'maven-publish'
+}
+
+group = 'com.tbd'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    lombokVersion = '1.18.38'
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:3.5.9'
+    compileOnly "org.springframework.boot:spring-boot-starter-data-jpa:3.5.9"
+
+    // Allows you to use Servlet classes (HttpServletRequest, etc.)
+    // but doesn't force the dependency onto the consumer
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation libs.junit.jupiter
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    api libs.commons.math3
+
+    implementation libs.guava
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+
+            from components.java
+
+            // This is the "com.tbd" part
+            groupId = 'com.tbd'
+
+            // This is the "common-security" part
+            artifactId = 'common-code'
+
+            version = '1.0.0'
+
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/the-best-dukkan/common-code")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user")
+                password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.key")
+            }
+        }
+    }
+}
