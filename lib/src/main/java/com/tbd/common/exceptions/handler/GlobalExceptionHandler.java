@@ -4,6 +4,7 @@ import com.tbd.common.dto.ErrorResponse;
 import com.tbd.common.exceptions.PageSizeLimitExceedException;
 import com.tbd.common.exceptions.ResourceNotFoundInDbException;
 import com.tbd.common.exceptions.UserSubNotFoundInHeaderException;
+import com.tbd.common.exceptions.ValidationException;
 import com.tbd.common.utils.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,13 +37,18 @@ public class GlobalExceptionHandler {
         return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
     @ExceptionHandler(UserSubNotFoundInHeaderException.class)
     public ResponseEntity<ErrorResponse> handleUserSubNotFoundInHeaderException(UserSubNotFoundInHeaderException ex) {
         return getErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN.value());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleMethodValidationExceptions(MethodArgumentNotValidException ex) {
 
         StringJoiner errors = new StringJoiner(", ");
 
