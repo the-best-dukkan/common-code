@@ -1,6 +1,7 @@
 package com.tbd.common.config;
 
 import com.tbd.common.exceptions.handler.GlobalExceptionHandler;
+import com.tbd.common.utils.ProtoMapperUtils;
 import com.tbd.common.utils.Translator;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -17,5 +18,10 @@ public class CommonAutoConfiguration {
     @Bean
     public GlobalExceptionHandler globalExceptionHandler(Translator translator) {
         return new GlobalExceptionHandler(translator);
+    }
+
+    @Bean
+    public ProtoMapperUtils protoMapperUtils() {
+        return new ProtoMapperUtils();
     }
 }

@@ -74,6 +74,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
 
+        log.error(ex.getMessage(), ex);
+
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .message(ex.getMessage())
                 .statusCode(500)
