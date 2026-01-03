@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.tbd'
-version = '1.0.5'
+version = '1.0.6'
 
 java {
     toolchain {
@@ -57,7 +57,7 @@ publishing {
             // This is the "common-security" part
             artifactId = 'common-code'
 
-            version = '1.0.5'
+            version = '1.0.6'
 
         }
     }

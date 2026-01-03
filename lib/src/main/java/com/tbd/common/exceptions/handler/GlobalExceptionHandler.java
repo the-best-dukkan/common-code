@@ -8,6 +8,7 @@ import com.tbd.common.exceptions.ValidationException;
 import com.tbd.common.utils.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.sqm.PathElementException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @ExceptionHandler(PathElementException.class)
+    public ResponseEntity<ErrorResponse> handlePathElementException(PathElementException ex) {
         return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     }
 
