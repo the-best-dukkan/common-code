@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package tbd.user_service;
+
+option java_multiple_files = true;
+option java_package = "com.tbd.proto.user_service";
+option java_outer_classname = "TbdUserProtos";
+
+message TbdUserProto {
+  string sub = 1;
+  string email = 2;
+  string full_name = 3;
+  bool profile_complete = 4;
+  string picture = 5;
+
+  // Instants map to Timestamp
+  google.protobuf.Timestamp created_date = 6;
+  google.protobuf.Timestamp modified_date = 7;
+  google.protobuf.Timestamp last_login = 8;
+
+  // Using 'optional' to handle the nullable Boolean in Java
+  optional bool is_email_verified = 9;
+
+  // Set<TbdRoleDTO> becomes a repeated field
+  repeated TbdRoleProto roles = 10;
+}
+
+message TbdRoleProto {
+  TbdRoles name = 1;
+}
+
+enum TbdRoles {
+  // Protobuf enums MUST have a zero-index default (usually UNKNOWN or the first role)
+  TBD_ROLE_UNSPECIFIED = 0;
+  ROLE_CUSTOMER = 1;
+  ROLE_TENANT = 2;
+  ROLE_ADMIN = 3;
+}
