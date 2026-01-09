@@ -13,6 +13,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -30,27 +31,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundInDbException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundInDbException(ResourceNotFoundInDbException ex) {
-        return getErrorResponse(ex.getMessage(), HttpStatus.NO_CONTENT.value());
+        return getErrorResponse(ex, HttpStatus.NO_CONTENT.value());
     }
 
     @ExceptionHandler(PageSizeLimitExceedException.class)
     public ResponseEntity<ErrorResponse> handlePageSizeLimitExceedException(PageSizeLimitExceedException ex) {
-        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return getErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
-        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return getErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler(PathElementException.class)
     public ResponseEntity<ErrorResponse> handlePathElementException(PathElementException ex) {
-        return getErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return getErrorResponse(ex, HttpStatus.BAD_REQUEST.value());
     }
 
     @ExceptionHandler(UserSubNotFoundInHeaderException.class)
     public ResponseEntity<ErrorResponse> handleUserSubNotFoundInHeaderException(UserSubNotFoundInHeaderException ex) {
-        return getErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN.value());
+        return getErrorResponse(ex, HttpStatus.FORBIDDEN.value());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        return getErrorResponse(ex, HttpStatus.FORBIDDEN.value());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -85,10 +91,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<ErrorResponse> getErrorResponse(String error, Integer statusCode) {
+    private ResponseEntity<ErrorResponse> getErrorResponse(Exception exception, Integer statusCode) {
+
+        log.error("Handled exception: {}", exception.getMessage(), exception);
 
         ErrorResponse errorResponse = new ErrorResponse(
-                error,
+                exception.getMessage(),
                 statusCode,
                 Instant.now()
         );
